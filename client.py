@@ -186,7 +186,7 @@ clock = pygame.time.Clock()
 s(1) # fake the wait for connect
 
 def draw_frame(sprites):
-    for i in len(sprites):
+    for i in range(len(sprites)):
         screen.blit(sprites[i].image, sprites[i].rect)
     
 
@@ -206,9 +206,9 @@ def main():
     should_continue = True
 
     # temporarily just add a player sprite to the list
-    #player = Player(Sprite.spriteobj_to_sprite(Sprite, Textures.player("front"), 0, 0))
-    #monster = Monster(Sprite.spriteobj_to_sprite(Sprite, Textures.monster("front"), 0, 1), HealthSpec(False, 100, 100, "monster"), "passive")
-    #Game.sprites = list([player.sprite, monster.sprite])
+    player = Player(Sprite.spriteobj_to_sprite(Sprite, Textures.player("front"), 0, 0))
+    monster = Monster(Sprite.spriteobj_to_sprite(Sprite, Textures.monster("front"), 0, 1), HealthSpec(False, 100, 100, "monster"), "passive")
+    Game.sprites = list([player.sprite, monster.sprite])
 
     deltaTime = 0
 
