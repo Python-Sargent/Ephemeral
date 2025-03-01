@@ -143,7 +143,7 @@ class Tile:
             self.rect2 = image.get_rect()
             self.rect2.center = pos
 
-def get_3x3(input_list, index1, index2):
+def get_3x3(input_list, y, x):
     """
     Crops a 2D list to a 3x3 pattern from the center if possible.
     If the input is smaller than 3x3 in either dimension, it will return as much as possible from the center-ish.
@@ -154,8 +154,8 @@ def get_3x3(input_list, index1, index2):
 
     num_cols_input_first_row = len(input_list[0]) if num_rows_input > 0 else 0
 
-    start_row = max(-1, (index1 - 2))  # Calculate starting row index
-    start_col = max(-1, (index2 - 2)) # Calculate starting col index
+    start_row = max(-1, (y - 2))  # Calculate starting row index
+    start_col = max(-1, (x - 2)) # Calculate starting col index
 
     cropped_list = []
     for i in range(3):
@@ -197,8 +197,8 @@ def get_index_offset(dir):
     EAST = 4
     """
 
-def generate_transition(tlist, index1, index2):
-    border_list = get_3x3(tlist, index1, index2)
+def generate_transition(tlist, y, x):
+    border_list = get_3x3(tlist, y, x)
     dir = randint(1, 4) # follow the TileRotations layout
     offset = get_index_offset(dir)
     #if len(border_list) - 1 <= offset[0]:
