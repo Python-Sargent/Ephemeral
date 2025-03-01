@@ -319,18 +319,8 @@ class Game:
                 del v
             for v in tilerow:
                 tiles.append(v)
-            #print(tilerow)
-            #tiles.extend(tilerow)
         #tiles = [i for s in tilerows for i in s]
-        print(tiles)
-        print(len(tiles))
         self.tiles = list([])
-        #for i in range(len(area.tilemap)):
-        #    for j in range(len(area.tilemap[i])):
-                #print(i)
-                #print(len(tpositions))
-                #print(tpositions[i])
-                #self.tiles.append(Tile(int(tiles[i]), tpositions[i], generate_transition(tiles, i, j)))
         for i in range(len(tiles)):
             self.tiles.append(Tile(int(tiles[i]), tpositions[i]))
 
