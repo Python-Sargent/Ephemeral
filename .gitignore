@@ -1,4 +1,4 @@
 # Pygame CE installation files/directories for Arch
-/pygame-ce/
-/venv/
+.venv
 python3
+.vscode

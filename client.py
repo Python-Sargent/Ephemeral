@@ -136,8 +136,9 @@ class Tile:
         self.tile = index
         image = load_tile_image(index)
         self.image1 = image
-        self.rect = image.get_rect()
-        self.rect.center = pos
+        self.rect1 = image.get_rect()
+        self.rect1.center = pos
+        self.image2 = None
         if transition:
             self.image2 = load_tile_transition_image(index, transition.tile_type) # for transitional tiles
             self.rect2 = image.get_rect()
@@ -176,20 +177,22 @@ def get_3x3(input_list, y, x):
 
     return cropped_list
 
-def get_index_offset(dir):
+def get_index_offset(v):
     ioffset = [
         [(-1, -1), (0, -1), (1, -1)],
         [(-1, 0), (0, 0), (1, 0)],
         [(-1, 1), (0, 1), (1, 1)]
     ]
-    if dir == 1:
-        return ioffset[0][1]
-    elif dir == 2:
-        return ioffset[1][0]
-    elif dir == 3:
-        return ioffset[2][1]
-    elif dir == 4:
-        return ioffset[1][2]
+
+    if v == 1:
+        return ioffset[0][1] # North
+    elif v == 2:
+        return ioffset[1][0] # West
+    elif v == 3:
+        return ioffset[2][1] # South
+    elif v == 4:
+        return ioffset[1][2] # East
+    
     """
     NORTH = 1
     WEST = 2
@@ -199,13 +202,12 @@ def get_index_offset(dir):
 
 def generate_transition(tlist, y, x):
     border_list = get_3x3(tlist, y, x)
-    dir = randint(1, 4) # follow the TileRotations layout
-    offset = get_index_offset(dir)
     #if len(border_list) - 1 <= offset[0]:
 
-    #for v in range(len(border_list)):
-    #    for h in range(len(border_list[v])):
-    #        pass
+    for v in range(len(border_list)):
+        offset = get_index_offset(v)
+        for h in range(len(border_list[v])):
+            pass
     transition = TileTransition()
     return transition
 
@@ -301,7 +303,8 @@ class Game:
         sprites = []
         if self.tiles != False:
             for i in range(len(self.tiles)):
-                sprites.append(Sprite(self.tiles[i].image1, self.tiles[i].rect))
+                sprites.append(Sprite(self.tiles[i].image1, self.tiles[i].rect1))
+                if self.tiles[i].image2: sprites.append(Sprite(self.tiles[i].image2, self.tiles[i].rect2))
         for i in range(len(self.objects)):
             sprites.append(self.objects[i].sprite)
         return sprites
