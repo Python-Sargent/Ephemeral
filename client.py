@@ -51,6 +51,7 @@ class DisplayParams:
             tiny = 8
         fontsize = 32
     center = [0, 0]
+    framerate = 60
 
 DisplayParams.center = (DisplayParams.size[0] / 2, DisplayParams.size[1] / 2)
 
@@ -289,7 +290,8 @@ class Game:
         player_scale = 4
         monster_scale = 4
         tile_scale = 4
-        player_speed = 7
+        player_speed = 5
+        monster_speed = 2
         drag = 1
     objects = False # set to False as there are no objects yet
     tiles = False
@@ -326,6 +328,8 @@ class Game:
         self.tiles = list([])
         for i in range(len(tiles)):
             self.tiles.append(Tile(int(tiles[i]), tpositions[i]))
+    def delta(self, value, dtime):
+        return value / 10 * dtime
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image, rect, z_index = 0):
@@ -431,10 +435,17 @@ class Player(Object):
             self.velocity[1] -= Game.settings.drag
     def move(self, vec2):
         self.animate_move(self.sprite.rect.center, self.sprite.rect.center + vec2)
-        self.velocity = Vector2(max(min(self.velocity[0] + vec2[0], Game.settings.player_speed), -Game.settings.player_speed), max(min(self.velocity[1] + vec2[1], Game.settings.player_speed), -Game.settings.player_speed))
-    def update(self):
+        print(self.velocity)
+        self.velocity = Vector2(max(min(self.velocity[0] + vec2[0], 
+                                        Game.settings.player_speed),
+                                        -Game.settings.player_speed),
+                                max(min(self.velocity[1] + vec2[1],
+                                        Game.settings.player_speed),
+                                        -Game.settings.player_speed))
+        print(self.velocity, "\n")
+    def update(self, dtime):
         self.apply_drag()
-        self.sprite.rect.center += self.velocity
+        self.sprite.rect.center += Game.delta(Game, self.velocity, dtime)
 
 
 
@@ -450,37 +461,12 @@ class Monster(Object):
     def set_texture(self, texture):
         self.sprite.image = texture
     def set_animation(self, animation_index):
-        self.sprite.image = Textures.player(self.textures[animation_index])[0]
+        self.sprite.image = Textures.monster(self.textures[animation_index])[0]
 
     def animate_move(self, pos, delta):
-        if pos[0] < delta[0]:
-            self.set_animation(3)
-        elif pos[0] > delta[0]:
-            self.set_animation(1)
-        if pos[1] < delta[1]:
-            if pos[0] < delta[0]:
-                self.set_animation(3)
-            elif pos[0] > delta[0]:
-                self.set_animation(1)
-            else:
-                self.set_animation(2)
-        elif pos[1] > delta[1]:
-            self.set_animation(0)
-    def apply_drag(self):
-        if self.velocity[0] < 0:
-            self.velocity[0] += Game.settings.drag
-        elif self.velocity[0] > 0:
-            self.velocity[0] -= Game.settings.drag
-        if self.velocity[1] < 0:
-            self.velocity[1] += Game.settings.drag
-        elif self.velocity[1] > 0:
-            self.velocity[1] -= Game.settings.drag
-    def move(self, vec2):
-        self.animate_move(self.sprite.rect.center, self.sprite.rect.center + vec2)
-        self.velocity = Vector2(max(min(self.velocity[0] + vec2[0], Game.settings.monster_speed), -Game.settings.monster_speed), max(min(self.velocity[1] + vec2[1], Game.settings.monster_speed), -Game.settings.monster_speed))
-    def update(self):
-        self.apply_drag()
-        self.sprite.rect.center += self.velocity
+        pass
+    def update(self, dtime):
+        pass
 
 # ClientSide
 
@@ -602,7 +588,7 @@ def main():
     dtime = 0
 
     while should_continue is True:
-        dtime = clock.tick(Game.settings.fps) / 1000
+        dtime = clock.tick(Game.settings.fps)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 should_continue = False
@@ -617,7 +603,7 @@ def main():
             Game.local_player.move(Vector2(-10, 0))
         elif keys[pygame.K_d]:
             Game.local_player.move(Vector2(10, 0))
-        Game.local_player.update() # should implement dtime at some point
+        Game.local_player.update(dtime) # should implement dtime at some point
 
         draw_window(Game.get_sprites(Game))
 
