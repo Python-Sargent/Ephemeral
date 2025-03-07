@@ -24,3 +24,4 @@ def load_texture(name, scale = False, use_convert = False):
         size = (size[0] * scale, size[1] * scale)
         image = transform.scale(image, size)
     return image, image.get_rect()
+

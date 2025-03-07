@@ -179,6 +179,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return False
+            object.removeDeadObjects(self.objects)
                 #elif event.type == pygame.KEYDOWN:
             #Keys.processPressed(Keys, pygame.key.get_pressed())
             keys = pygame.key.get_pressed()
