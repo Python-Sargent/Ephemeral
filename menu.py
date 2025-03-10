@@ -87,6 +87,7 @@ def main():
         check_hover(Menu.elements)
 
         if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu))
+        Menu.join_singleplayer(Menu)
 
     pygame.quit()
 
