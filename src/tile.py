@@ -57,10 +57,6 @@ class Tile:
             self.image.blit(image2, rect2)
 
 def get_3x3(input_list, y, x):
-    """
-    Crops a 2D list to a 3x3 pattern from the center if possible.
-    If the input is smaller than 3x3 in either dimension, it will return as much as possible from the center-ish.
-    """
     num_rows_input = len(input_list)
     if num_rows_input == 0 or type(input_list) != type(list()) :
         return []  # Handle empty input
@@ -106,6 +102,7 @@ def get_index_offset(v):
         return ioffset[1][2] # East
 
 def generate_transition(tlist, y, x):
+    if tlist[y][x] == 0: return None # 0 (Empty) tile does not have any transition at this time
     border_list = get_3x3(tlist, y, x)
     #if len(border_list) - 1 <= offset[0]:
 
@@ -113,7 +110,7 @@ def generate_transition(tlist, y, x):
         offset = get_index_offset(v)
         for h in range(len(border_list[v])):
             pass
-    transition = TileTransition()
+    transition = TileTransition("corner", 1)
     return transition
 
 def deserialize_tilemap(file):

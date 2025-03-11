@@ -23,3 +23,9 @@ def begin(screen):
     s(1) # fake the wait for connect
 
     return game.Game.play(game.Game, screen)
+
+def main(): # allow the client to be started directly without calling begin()
+    screen = pygame.display.set_mode(screen_settings.DisplayParams.size)
+    begin(screen)
+
+main()

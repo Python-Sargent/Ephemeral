@@ -145,11 +145,12 @@ class Game:
         return sprites
     def open_area(self, name):
         area = tile.loadArea(name)
+        tilemap = area.tilemap
         tiles = list([])
         tpositions = list([])
-        for i in range(len(area.tilemap)):
-            tilerow = area.tilemap[i]
-            for j in range(len(area.tilemap[i])):
+        for i in range(len(tilemap)):
+            tilerow = tilemap[i]
+            for j in range(len(tilemap[i])):
                 #tile = area.tilemap[i][j]
                 tpositions.append(Vector2(j * (16 * settings.Settings.tile_scale) + (8 * settings.Settings.tile_scale), i * (16 * settings.Settings.tile_scale) + 8 * settings.Settings.tile_scale))
             for v in tilerow:
@@ -160,7 +161,9 @@ class Game:
         #tiles = [i for s in tilerows for i in s]
         self.tiles = list([])
         for i in range(len(tiles)):
-            self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i]))
+            y = i // len(tilemap)
+            x = i % len(tilemap[y])
+            self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i], tile.generate_transition(tilemap, y, x)))
     def delta(self, value, dtime):
         return value / 10 * dtime
     def play(self, screen):
