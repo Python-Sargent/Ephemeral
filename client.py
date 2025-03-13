@@ -24,8 +24,8 @@ def begin(screen):
 
     return game.Game.play(game.Game, screen)
 
-def main(): # allow the client to be started directly without calling begin()
+def main(): # allow the client to be started directly without having to call begin() and pass in the screen
     screen = pygame.display.set_mode(screen_settings.DisplayParams.size)
     begin(screen)
 
-main()
+# main() should not be called here, as begin() will run twice when begin (imported as begin_client in menu) is used.

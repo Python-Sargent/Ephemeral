@@ -18,7 +18,8 @@ def load_texture(name, scale = False, use_convert = False):
                 image = image.convert_alpha()
     except FileNotFoundError:
         print(f"Cannot load image: {fullname}")
-        raise SystemExit
+        #raise SystemExit
+        raise OSError(fullname)
     if scale != False:
         size = image.get_size()
         size = (size[0] * scale, size[1] * scale)

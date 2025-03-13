@@ -40,6 +40,7 @@ class Menu:
     should_continue = True
     should_update = True
     def join_singleplayer(self):
+        print("joining_singleplayer")
         self.should_continue = begin_client(screen) # TODO eventually pass in the server ip (localip or multiplayer server ip)
 
 def draw_menu(screen, sprites = False):
@@ -87,7 +88,7 @@ def main():
         check_hover(Menu.elements)
 
         if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu))
-        Menu.join_singleplayer(Menu)
+        if Menu.should_continue is True: Menu.join_singleplayer(Menu)
 
     pygame.quit()
 

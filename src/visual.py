@@ -40,6 +40,7 @@ class Particle:
 
 def create_text(text, pos, size = 32, color = Colors.white):
     from pygame import font
+    font.init() # initalize the font to get rid of edge cases, can be called more than once without causing issues
     textfont = font.Font(Settings.font, size)
     image = textfont.render(text, False, color)
     rect = image.get_rect()

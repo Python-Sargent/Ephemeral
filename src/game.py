@@ -25,6 +25,7 @@ def load_tile_image(index):
     return texture.load_texture("tile_" + tile.Tiles.tiles[index] + ".png", settings.Settings.tile_scale, True)[0]
 
 def load_tile_transition_image(index, transition):
+    if tile.Tiles.tiles[index] == "emtpy": return None
     return texture.load_texture("tile_" + tile.Tiles.tiles[index]+ "_" + transition + ".png", settings.Settings.tile_scale, True)[0]
 
 class Effect: # effects: value * multiplier + blessing - curse
@@ -148,22 +149,29 @@ class Game:
         tilemap = area.tilemap
         tiles = list([])
         tpositions = list([])
+        tindices = list([])
         for i in range(len(tilemap)):
             tilerow = tilemap[i]
             for j in range(len(tilemap[i])):
                 #tile = area.tilemap[i][j]
+                tindices.append((i, j))
                 tpositions.append(Vector2(j * (16 * settings.Settings.tile_scale) + (8 * settings.Settings.tile_scale), i * (16 * settings.Settings.tile_scale) + 8 * settings.Settings.tile_scale))
             for v in tilerow:
                 if v == "\n": tilerow.remove("\n")
-                del v
-            for v in tilerow:
-                tiles.append(v)
+                else: tiles.append(v)
+                
         #tiles = [i for s in tilerows for i in s]
         self.tiles = list([])
         for i in range(len(tiles)):
-            y = i // len(tilemap)
-            x = i % len(tilemap[y])
-            self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i], tile.generate_transition(tilemap, y, x)))
+            #print(len(tilemap)) # 18  len
+            #print(len(tiles)) #   693 len
+            #print(i) #            324 tile index
+            #y = i // (len(tilemap) - 1)
+            #print(y) #      18  row
+            #x = i % (len(tilemap[y]) - 1)
+            #print(x, "\n") #      00  column
+            #self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i], tile.generate_transition(tilemap, tindices[i][0], tindices[i][1])))
+            self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i]))
     def delta(self, value, dtime):
         return value / 10 * dtime
     def play(self, screen):
