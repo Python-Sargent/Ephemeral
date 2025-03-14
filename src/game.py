@@ -146,6 +146,7 @@ class Game:
             sprites.append(self.objects[i].sprite)
         return sprites
     def open_area(self, name):
+        log("Opening area: " + str(name))
         area = tile.loadArea(name)
         tilemap = area.tilemap
         tiles = list([])
@@ -176,6 +177,7 @@ class Game:
     def delta(self, value, dtime):
         return value / 10 * dtime
     def play(self, screen):
+        log("Starting Game")
         is_playing = True
 
         # temporarily just add a player and monster sprite to the list
@@ -190,6 +192,7 @@ class Game:
             dtime = clock.tick(settings.Settings.fps)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    log("Quitting Game")
                     return False
             object.removeDeadObjects(self.objects)
                 #elif event.type == pygame.KEYDOWN:
@@ -206,4 +209,5 @@ class Game:
             self.local_player.update(dtime)
             screen_settings.draw_window(screen, self.get_sprites(self))
         pygame.quit()
+        log("Game Finished")
         return True # return to the menu after game is done.

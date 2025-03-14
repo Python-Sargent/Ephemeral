@@ -11,7 +11,7 @@ from src.sprite import Sprite
 from src.texture import load_texture
 import src.menu_element as menu_element
 from src.visual import Colors
-from src.log import log
+import src.log as log
 
 pygame.init()
 
@@ -41,7 +41,7 @@ class Menu:
     should_continue = True
     should_update = True
     def join_singleplayer(self):
-        log("Joining singleplayer game")
+        log.log("Joining singleplayer game")
         self.should_continue = begin_client(screen) # TODO eventually pass in the server ip (localip or multiplayer server ip)
 
 def draw_menu(screen, sprites = False):
@@ -77,6 +77,8 @@ def main():
     #bg = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_bg.png"))
     #Menu.elements.append(bg)
 
+    log.log_begin()
+
     play = menu_element.Button(Menu.join_singleplayer, Menu, "Singleplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2))
     Menu.elements.append(play)
 
@@ -84,6 +86,7 @@ def main():
         clock.tick(30)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                log.log("Quitting Menu")
                 Menu.should_continue = False
         
         check_hover(Menu.elements)
@@ -92,5 +95,7 @@ def main():
         if Menu.should_continue is True: Menu.join_singleplayer(Menu)
 
     pygame.quit()
+
+    log.log_end()
 
 main()
