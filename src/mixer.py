@@ -1,8 +1,9 @@
 import pygame
+from src.log import log
 
 pygame.mixer.init()
 
 if pygame.mixer.get_init():
-    print("pygame.mixer initialized")
+    log("pygame.mixer initialized")
 else:
     raise ValueError("Missing module 'pygame.mixer'")

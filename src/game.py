@@ -12,6 +12,7 @@ import src.texture as texture
 import src.tile as tile
 import src.texture as texture
 import src.settings as settings
+from src.log import log
 
 class Textures:
     def player(img_name):
@@ -89,14 +90,14 @@ class Player(object.Object):
             self.velocity[1] -= settings.Settings.drag
     def move(self, vec2):
         self.animate_move(self.sprite.rect.center, self.sprite.rect.center + vec2)
-        print(self.velocity)
+        #log(self.velocity)
         self.velocity = Vector2(max(min(self.velocity[0] + vec2[0], 
                                         settings.Settings.player_speed),
                                         -settings.Settings.player_speed),
                                 max(min(self.velocity[1] + vec2[1],
                                         settings.Settings.player_speed),
                                         -settings.Settings.player_speed))
-        print(self.velocity, "\n")
+        #log(self.velocity)
     def update(self, dtime):
         self.apply_drag()
         self.sprite.rect.center += Game.delta(Game, self.velocity, dtime)

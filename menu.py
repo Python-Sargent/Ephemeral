@@ -11,6 +11,7 @@ from src.sprite import Sprite
 from src.texture import load_texture
 import src.menu_element as menu_element
 from src.visual import Colors
+from src.log import log
 
 pygame.init()
 
@@ -40,7 +41,7 @@ class Menu:
     should_continue = True
     should_update = True
     def join_singleplayer(self):
-        print("joining_singleplayer")
+        log("Joining singleplayer game")
         self.should_continue = begin_client(screen) # TODO eventually pass in the server ip (localip or multiplayer server ip)
 
 def draw_menu(screen, sprites = False):
@@ -54,22 +55,22 @@ def draw_menu(screen, sprites = False):
 
 def check_hover(elements):
     mousepos = pygame.mouse.get_pos()
-    print(mousepos)
+    #print(mousepos)
     for i in range(len(elements)):
         if elements[i].sprite.rect.collidepoint(mousepos):
             try:
                 elements[i].hover()
             except:
-                print("no hover")
+                #print("no hover")
                 continue
-            print("hover")
+            #print("hover")
         else:
             try:
                 elements[i].unhover()
             except:
-                print("no unhover")
+                #print("no unhover")
                 continue
-            print("unhover")
+            #print("unhover")
 
 def main():
 

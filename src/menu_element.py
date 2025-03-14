@@ -1,3 +1,8 @@
+# python
+#
+# Multiplayer Networking Game
+# 
+
 from src.sprite import Sprite
 from pygame import Vector2
 from src.visual import create_text
@@ -22,14 +27,14 @@ class Button(Clickable):
         super().__init__(button, action, arguments)
 
     def hover(self):
-        print("hovering")
+        #print("hovering")
         pos = self.sprite.rect.center
         button = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_button_hovered.png", self.size))
         button.rect.center = pos
         self.sprite = button
 
     def unhover(self):
-        print("unhovering")
+        #print("unhovering")
         pos = self.sprite.rect.center
         button = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_button.png", self.size))
         button.rect.center = pos
