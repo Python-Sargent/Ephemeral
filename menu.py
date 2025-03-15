@@ -103,5 +103,3 @@ def main():
     log.log_end()
 
 main()
-
-#test
