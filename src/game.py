@@ -154,10 +154,10 @@ class Game:
         tindices = list([])
         for i in range(len(tilemap)):
             tilerow = tilemap[i]
-            for j in range(len(tilemap[i])):
+            for j in range(len(tilemap[i-1])):
                 #tile = area.tilemap[i][j]
                 tindices.append((i, j))
-                tpositions.append(Vector2(j * (16 * settings.Settings.tile_scale) + (8 * settings.Settings.tile_scale), i * (16 * settings.Settings.tile_scale) + 8 * settings.Settings.tile_scale))
+                tpositions.append(Vector2((j) * (16 * settings.Settings.tile_scale) + (8 * settings.Settings.tile_scale), (i) * (16 * settings.Settings.tile_scale) + 8 * settings.Settings.tile_scale))
             for v in tilerow:
                 if v == "\n": tilerow.remove("\n")
                 else: tiles.append(v)

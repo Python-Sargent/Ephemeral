@@ -117,8 +117,8 @@ def deserialize_tilemap(file):
     tmap = list([])
     for line in file:
         tline = list([])
-        for i in range(len(line)):
-            tline.append(line[i])
+        for i in line:
+            tline.append(i)
         tmap.append(tline)
     return tmap
 

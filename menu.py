@@ -60,6 +60,7 @@ def check_hover(elements):
         if elements[i].sprite.rect.collidepoint(mousepos):
             try:
                 elements[i].hover()
+                Menu.should_update = True
             except:
                 #print("no hover")
                 continue
@@ -67,6 +68,7 @@ def check_hover(elements):
         else:
             try:
                 elements[i].unhover()
+                Menu.should_update = True
             except:
                 #print("no unhover")
                 continue
@@ -83,7 +85,7 @@ def main():
     Menu.elements.append(play)
 
     while Menu.should_continue is True:
-        clock.tick(30)
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 log.log("Quitting Menu")
@@ -95,6 +97,8 @@ def main():
         if Menu.should_continue is True: Menu.join_singleplayer(Menu)
 
     pygame.quit()
+
+    log.log("Menu Stopped")
 
     log.log_end()
 

@@ -29,7 +29,10 @@ def log(message, loglevel = "Info"):
     _logmsg(msg, "log.txt")
 
 def log_begin():
-    log("""Logging Started
+    mode = ""
+    if verbose is True: mode = "Verbose"
+    else: mode = "Warn"
+    log("Logging started with mode " + mode + """
  ________  _______   __    __  ________  __       __  ________  _______    ______   __       
 /        |/       \ /  |  /  |/        |/  \     /  |/        |/       \  /      \ /  |      
 $$$$$$$$/ $$$$$$$  |$$ |  $$ |$$$$$$$$/ $$  \   /$$ |$$$$$$$$/ $$$$$$$  |/$$$$$$  |$$ |      

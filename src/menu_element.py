@@ -31,6 +31,7 @@ class Button(Clickable):
         pos = self.sprite.rect.center
         button = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_button_hovered.png", self.size))
         button.rect.center = pos
+        del self.sprite
         self.sprite = button
 
     def unhover(self):
@@ -38,4 +39,5 @@ class Button(Clickable):
         pos = self.sprite.rect.center
         button = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_button.png", self.size))
         button.rect.center = pos
+        del self.sprite
         self.sprite = button
