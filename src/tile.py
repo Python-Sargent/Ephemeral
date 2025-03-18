@@ -8,6 +8,8 @@ from pygame import Vector2
 from src.object import Object
 from src.object import HealthSpec
 from src.sprite import Sprite
+from src.log import log
+from src.settings import Settings
 from os import path
 
 class Tiles:
@@ -113,7 +115,7 @@ def generate_transition(tlist, y, x):
     transition = TileTransition("corner", 1)
     return transition
 
-def deserialize_tilemap(file):
+"""def deserialize_tilemap(file):
     tmap = list([])
     for line in file:
         tline = list([])
@@ -154,18 +156,93 @@ def loadTileMap(filename):
     return tilemap
 
 def loadObjectMap(name):
-    fullname = path.join("maps", name)
+    fullname = path.join("maps", "name)
     try:
         objects = deserialize_objectmap(open(fullname))
     except FileNotFoundError:
         print(f"Cannot load objectmap: {fullname}")
         raise SystemExit
-    return objects
+    return objects"""
+
+def deserialize_map(file):
+    mode = "tmap"
+    tmap = list([])
+    objects = list([])
+    for line in file:
+        #print(line)
+        if line == "tmap\n": mode = "tmap"; continue #   set deserialize mode for the next lines
+        elif line == "omap\n": mode = "omap"; continue
+
+        if mode == "tmap":
+            tline = list([])
+            for i in line:
+                tline.append(i)
+            tmap.append(tline)
+        if mode == "omap":
+            line = line.replace('\n', "") # remove the tailing newline charactor (not the best way?)
+            oline = line.split(" ") #example of a line:
+            # -1 0 100 100 collider monster_front.png 0 0
+            # ttl, invulnerable, maxhealth, health, collider_type, image_path, posx, posy
+            ttl = int(oline[0])
+            invulnerable = int(oline[1])
+            maxhealth = int(oline[2])
+            health = int(oline[3])
+            collider_type = oline[4]
+            image_path = oline[5]
+            posx = int(oline[6])
+            posy = int(oline[7])
+            sprite = Sprite.spriteobj_to_sprite(Sprite, load_texture(image_path))
+            sprite.rect.center = Vector2(posx, posy)
+            obj = Object(ttl, HealthSpec(invulnerable, maxhealth, health), collider_type, sprite)
+            objects.append(obj)
+    return (tmap, objects)
+
+def loadMap(name):
+    fullname = path.join("maps", "map_"+name+".txt")
+    try:
+        area_map = deserialize_map(open(fullname))
+    except FileNotFoundError:
+        print(f"Cannot load objectmap: {fullname}")
+        raise SystemExit
+    return area_map
 
 def loadArea(name):
-    tilemap = loadTileMap("tilemap_" + name + ".txt")
-    objects = loadObjectMap("objectmap_" + name + ".txt")
-    return Area(tilemap, objects)
+    area_map = loadMap(name)
+    return Area(area_map[0], area_map[1])
+
+def init_area(area):
+    tilemap = area.tilemap
+    tiles = list([])
+    tpositions = list([])
+    tindices = list([])
+    for i in range(len(tilemap)):
+        tilerow = tilemap[i]
+        for j in range(len(tilemap[i-1])):
+            #tile = area.tilemap[i][j]
+            tindices.append((i, j))
+            tpositions.append(Vector2((j) * (16 * Settings.tile_scale) + (8 * Settings.tile_scale), (i) * (16 * Settings.tile_scale) + 8 * Settings.tile_scale))
+        for v in tilerow:
+            if v == "\n": tilerow.remove("\n")
+            else: tiles.append(v)
+            
+    #tiles = [i for s in tilerows for i in s]
+    tiles2 = list([])
+    for i in range(len(tiles)):
+        #print(len(tilemap)) # 18  len
+        #print(len(tiles)) #   693 len
+        #print(i) #            324 tile index
+        #y = i // (len(tilemap) - 1)
+        #print(y) #      18  row
+        #x = i % (len(tilemap[y]) - 1)
+        #print(x, "\n") #      00  column
+        #self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i], tile.generate_transition(tilemap, tindices[i][0], tindices[i][1])))
+        tiles2.append(Tile(int(tiles[i]), tpositions[i]))
+    return tiles2
+
+def open_area(name):
+    log("Opening area: " + str(name))
+    area = loadArea(name)
+    return init_area(area)
 
 class TileRotations:
     NONE = 0

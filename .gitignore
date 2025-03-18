@@ -1,9 +1,12 @@
-# Pygame CE installation files/directories for Arch
+# ignore venv for pygame-ce in ARCH
 .venv
 python3
+# ignore vscode files
 .vscode
-.testing
 __pycache__
 src/__pycache__
 *.pyc
+# ignore personal installation/development files
+.testing
 log.txt
+textures/unused

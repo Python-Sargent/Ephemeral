@@ -146,34 +146,7 @@ class Game:
             sprites.append(self.objects[i].sprite)
         return sprites
     def open_area(self, name):
-        log("Opening area: " + str(name))
-        area = tile.loadArea(name)
-        tilemap = area.tilemap
-        tiles = list([])
-        tpositions = list([])
-        tindices = list([])
-        for i in range(len(tilemap)):
-            tilerow = tilemap[i]
-            for j in range(len(tilemap[i-1])):
-                #tile = area.tilemap[i][j]
-                tindices.append((i, j))
-                tpositions.append(Vector2((j) * (16 * settings.Settings.tile_scale) + (8 * settings.Settings.tile_scale), (i) * (16 * settings.Settings.tile_scale) + 8 * settings.Settings.tile_scale))
-            for v in tilerow:
-                if v == "\n": tilerow.remove("\n")
-                else: tiles.append(v)
-                
-        #tiles = [i for s in tilerows for i in s]
-        self.tiles = list([])
-        for i in range(len(tiles)):
-            #print(len(tilemap)) # 18  len
-            #print(len(tiles)) #   693 len
-            #print(i) #            324 tile index
-            #y = i // (len(tilemap) - 1)
-            #print(y) #      18  row
-            #x = i % (len(tilemap[y]) - 1)
-            #print(x, "\n") #      00  column
-            #self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i], tile.generate_transition(tilemap, tindices[i][0], tindices[i][1])))
-            self.tiles.append(tile.Tile(int(tiles[i]), tpositions[i]))
+        self.tiles = tile.open_area(name)
     def delta(self, value, dtime):
         return value / 10 * dtime
     def play(self, screen):
