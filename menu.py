@@ -107,7 +107,7 @@ def main():
 
         if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu))
 
-        if Menu.should_continue is True: Menu.join_singleplayer(Menu)
+        #if Menu.should_continue is True: Menu.join_singleplayer(Menu)
 
     pygame.quit()
 
