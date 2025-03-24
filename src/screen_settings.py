@@ -12,7 +12,7 @@ class DisplayParams:
         game = "Ephemeral - Singleplayer"
         menu = "Ephemeral - Main Menu"
     fill_color = 20, 20, 20
-    icon = load_texture("icon.png", False, False)[0]
+    icon = load_texture("icon.png", False, False)
     class Sizes:
         scalar = 60
         class Heading:
@@ -29,7 +29,7 @@ DisplayParams.center = (DisplayParams.size[0] / 2, DisplayParams.size[1] / 2)
 
 def draw_frame(screen, sprites):
     for i in range(len(sprites)):
-        screen.blit(sprites[i].image, sprites[i].rect)
+        screen.blit(sprites[i].image(), sprites[i].rect)
     
 
 def draw_window(screen, sprites = False):

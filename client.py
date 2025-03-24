@@ -17,8 +17,9 @@ def begin(screen):
 
     screen.fill(visual.Colors.darkgrey)
     textobj = visual.create_text("Connecting to Server...", Vector2(screen_settings.DisplayParams.center[0], screen_settings.DisplayParams.center[1]), 48)
-    text_sprite = sprite.Sprite.spriteobj_to_sprite(sprite.Sprite, textobj)
-    screen.blit(text_sprite.image, text_sprite.rect)
+    text_sprite = sprite.Sprite(textobj[0])
+    text_sprite.rect = textobj[1]
+    screen.blit(text_sprite.image(), text_sprite.rect)
     pygame.display.flip()
     s(1) # fake the wait for connect
 

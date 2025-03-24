@@ -15,6 +15,7 @@ def _logmsg(message, filename):
     try:
         with open(filename, "a") as log_file:  # "a" for append mode
             log_file.write(message + linesep) #os.linesep adds the correct line ending for the OS.
+            log_file.close()
     except OSError as e:
         print(f"Error writing to file {filename}: {e}")
 

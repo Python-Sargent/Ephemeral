@@ -19,6 +19,7 @@ class Colors:
     darkgrey = 80, 80, 80
     darkgrey2 = 60, 60, 70
 
+"""
 class Particle:
     def __init__(self, ttl, sprite = False): # TTL is Time To Live
         if sprite != False:
@@ -37,7 +38,8 @@ class Particle:
     
     def duplicate(self):
         return self(self.ttl, HealthSpec(self.invulnerable, self.max_health, self.health, self.damage_group), self.sprite)
-
+"""
+        
 def create_text(text, pos, size = 32, color = Colors.white):
     from pygame import font
     font.init() # initalize the font to get rid of edge cases, can be called more than once without causing issues

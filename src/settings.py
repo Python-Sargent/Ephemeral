@@ -7,6 +7,7 @@ from src.object import HealthSpec
 
 class Settings:
     fps = 60
+    tick_speed = 20
     maxhealth = 100
     player_hspec = HealthSpec(False, 100, 100, "friendly_player")
     player_scale = 4

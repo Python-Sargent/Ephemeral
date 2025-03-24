@@ -10,3 +10,6 @@ src/__pycache__
 .testing
 log.txt
 textures/unused
+maps/map_mapmaker.txt
+.vscode/settings.json
+out

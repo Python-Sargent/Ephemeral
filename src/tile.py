@@ -4,13 +4,17 @@
 # 
 
 from src.texture import load_texture
+from src.texture import load_spriteobj
 from pygame import Vector2
 from src.object import Object
 from src.object import HealthSpec
 from src.sprite import Sprite
 from src.log import log
 from src.settings import Settings
+from src.texture import Animation
+from src.texture import anim_image
 from os import path
+from random import randint as r
 
 class Tiles:
     empty = 0
@@ -23,12 +27,33 @@ class Tiles:
     water = 7
     deep_water = 8
     tiles = ("empty", "grassy", "stony", "sandy", "snowy", "icy", "dirty", "water", "deep_water")
+    default_anim_len = 2
+    #anim_lengths = (1, 4, 1, 1, 1, 1, 1, 4, 4)
+    anim_lengths = (1, 4, 1, 1, 1, 1, 1, 2, 2)
+    anim_delay = (0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+    random_offset = (0, 3, 0, 0, 0, 0, 0, 0, 0)
 
-def load_tile_image(index):
-    return load_texture("tile_" + Tiles.tiles[index] + ".png", 4, True)[0]
+#def load_tile_image(index, scale = 4):
+#    return load_texture("tile_" + Tiles.tiles[index] + ".png", scale, True)[0]
 
-def load_tile_transition_image(index, transition):
-    return load_texture("tile_" + Tiles.tiles[index]+ "_" + transition + ".png", 4, True)[0]
+#def load_tile_transition_image(index, transition):
+#    return load_texture("tile_" + Tiles.tiles[index]+ "_" + transition + ".png", 4, True)[0]
+
+def load_tile_anim(index, anim_len = Tiles.default_anim_len):
+    d = list([])
+    for i in range(anim_len):
+        d.append(20*Tiles.anim_delay[index])
+    
+    ro = Tiles.random_offset[index]
+    offset = r(0, ro)
+
+    return Animation("tile_" + Tiles.tiles[index], anim_len, d, Settings.tile_scale, offset)
+
+def load_tile_transition_anim(index, transition, anim_len = Tiles.default_anim_len, offset = 0):
+    d = list([])
+    for i in range(anim_len):
+        d.append(20*Tiles.anim_delay[index])
+    return Animation("tile_" + Tiles.tiles[index] + "_" + transition, anim_len, d, Settings.tile_scale, offset)
 
 class TileMap:
     def __init__(self, tiles):
@@ -48,15 +73,22 @@ class TileTransition:
 class Tile:
     def __init__(self, index, pos, transition = None):
         self.tile = index
-        image = load_tile_image(index)
-        self.image = image
-        self.rect = image.get_rect()
+        self.animation = load_tile_anim(index, Tiles.anim_lengths[index])
+        self.transition = transition
+        t_image = anim_image(self.animation)
+        self.rect = t_image.get_rect()
         self.rect.center = pos
         if transition:
-            image2 = load_tile_transition_image(index, transition.tile_type) # for transitional tiles
-            rect2 = image.get_rect()
-            rect2.center = pos
-            self.image.blit(image2, rect2)
+            self.animation2 = load_tile_transition_anim(index, transition.tile_type, Tiles.anim_lengths[index], self.animation.current)
+            image2 = anim_image(self.animation2)
+            self.rect2 = image2.get_rect()
+            self.rect2.center = pos
+    def image(self):
+        image1 = anim_image(self.animation)
+        if self.transition:
+            image2 = anim_image(self.animation2)
+            image1.blit(image2, self.rect2)
+        return image1
 
 def get_3x3(input_list, y, x):
     num_rows_input = len(input_list)
@@ -191,7 +223,7 @@ def deserialize_map(file):
             image_path = oline[5]
             posx = int(oline[6])
             posy = int(oline[7])
-            sprite = Sprite.spriteobj_to_sprite(Sprite, load_texture(image_path))
+            sprite = Sprite(load_texture(image_path))
             sprite.rect.center = Vector2(posx, posy)
             obj = Object(ttl, HealthSpec(invulnerable, maxhealth, health), collider_type, sprite)
             objects.append(obj)
@@ -210,7 +242,7 @@ def loadArea(name):
     area_map = loadMap(name)
     return Area(area_map[0], area_map[1])
 
-def init_area(area):
+def tilelist_from_area(area):
     tilemap = area.tilemap
     tiles = list([])
     tpositions = list([])
@@ -239,10 +271,44 @@ def init_area(area):
         tiles2.append(Tile(int(tiles[i]), tpositions[i]))
     return tiles2
 
-def open_area(name):
+def open_tmap_from_area(name):
     log("Opening area: " + str(name))
     area = loadArea(name)
-    return init_area(area)
+    return tilelist_from_area(area)
+
+def serialize_object(obj):
+    output = ""
+    output += str(obj.ttl) + " "
+    output += str(obj.invulnerable) + " "
+    output += str(obj.maxhealth) + " "
+    output += str(obj.health) + " "
+    output += str(obj.collider_type) + " "
+    output += "monster_front.png" + " " # TODO: make this actually get the path of the image
+    output += str(obj.rect[0]) + " "
+    output += str(obj.rect[1]) + "\n"
+    return output
+    # ttl, invulnerable, maxhealth, health, collider_type, image_path, posx, posy
+
+def save_area(name, area):
+    log("Saving area: " + str(name))
+    tmap = area.tilemap
+    strfile = "tmap\n"
+    for i in range(len(tmap)):
+        line = ""
+        for j in range(len(tmap[i])):
+            line += str(tmap[i][j])
+        strfile += str(line) + "\n"
+    if area.objects != None: # if there are objects in this area
+        strfile += "omap"
+        for obj in area.objects:
+            strfile += str(serialize_object(obj))
+    #print(strfile)
+    filepath = path.join("maps", "map_" + name + ".txt")
+    file = open(filepath, "w")
+    file.write(strfile)
+    file.close()
+    #objects = area.objects
+
 
 class TileRotations:
     NONE = 0

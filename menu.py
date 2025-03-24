@@ -12,6 +12,8 @@ from src.texture import load_texture
 import src.menu_element as menu_element
 from src.visual import Colors
 import src.log as log
+from src.app_interaction import DiscordRPC
+from src.settings import Settings
 
 pygame.init()
 
@@ -42,6 +44,7 @@ class Menu:
     should_update = True
     def join_singleplayer(self):
         log.log("Joining singleplayer game")
+        DiscordRPC.set(DiscordRPC, "In Game", "Playing Singleplayer")
         self.should_continue = begin_client(screen) # TODO eventually pass in the server ip (localip or multiplayer server ip)
 
 def draw_menu(screen, sprites = False):
@@ -55,28 +58,33 @@ def draw_menu(screen, sprites = False):
 
 def check_hover(elements):
     mousepos = pygame.mouse.get_pos()
-    #print(mousepos)
     for i in range(len(elements)):
         if elements[i].sprite.rect.collidepoint(mousepos):
             try:
                 elements[i].hover()
                 Menu.should_update = True
             except:
-                #print("no hover")
-                continue
-            #print("hover")
+                pass # doesn't matter if I do pass or continue
         else:
             try:
                 elements[i].unhover()
                 Menu.should_update = True
             except:
-                #print("no unhover")
+                pass
+
+def check_click(elements):
+    mousepos = pygame.mouse.get_pos()
+    for i in range(len(elements)):
+        if elements[i].sprite.rect.collidepoint(mousepos):
+            try:
+                elements[i].click()
+                #Menu.should_update = True
+            except:
                 continue
-            #print("unhover")
 
 def main():
 
-    #bg = Sprite.spriteobj_to_sprite(Sprite, load_texture("menu_bg.png"))
+    #bg = Sprite.spriteobj_to_sprite(Sprite, load_spriteobj("menu_bg.png"))
     #Menu.elements.append(bg)
 
     log.log_begin()
@@ -84,19 +92,26 @@ def main():
     play = menu_element.Button(Menu.join_singleplayer, Menu, "Singleplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2))
     Menu.elements.append(play)
 
+    DiscordRPC.set(DiscordRPC, "In Menu", "Sitting in Main Menu")
+
     while Menu.should_continue is True:
-        clock.tick(60)
+        dtime = clock.tick(Settings.fps)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 log.log("Quitting Menu")
                 Menu.should_continue = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                check_click(Menu.elements)
         
         check_hover(Menu.elements)
 
         if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu))
+
         if Menu.should_continue is True: Menu.join_singleplayer(Menu)
 
     pygame.quit()
+
+    DiscordRPC.stop(DiscordRPC)
 
     log.log("Menu Stopped")
 

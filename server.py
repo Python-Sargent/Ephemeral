@@ -13,18 +13,10 @@ class Network:
     def deserialize(content):
         pass
     class RequestTypes:
-        class SERVER_GET_INFO:
-            def __init__(self):
-                self.request_type = "INFO"
-        class SERVER_ADD_CLIENT:
-            def __init__(self):
-                self.request_type = "CLIENT_ADD"
-        class SERVER_REMOVE_CLIENT:
-            def __init__(self):
-                self.request_type = "CLIENT_REMOVE"
-        class SERVER_CLIENT_INPUT:
-            def __init__(self):
-                self.request_type = "CLIENT_INPUT"
+        SERVER_GET_INFO = "INFO"
+        SERVER_ADD_CLIENT = "CLIENT_ADD"
+        SERVER_REMOVE_CLIENT = "CLIENT_REMOVE"
+        SERVER_CLIENT_INPUT = "CLIENT_INPUT"
     
 
 """
