@@ -25,12 +25,21 @@ class Tiles:
     icy = 5
     dirty = 6
     water = 7
-    deep_water = 8
+    deep_water = 8 # 4 bit number
     tiles = ("empty", "grassy", "stony", "sandy", "snowy", "icy", "dirty", "water", "deep_water")
     default_anim_len = 2
     #anim_lengths = (1, 4, 1, 1, 1, 1, 1, 4, 4)
-    anim_lengths = (1, 4, 1, 1, 1, 1, 1, 2, 2)
-    anim_delay = (0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5)
+    anim_lengths = (1, 4, 1, 1, 1, 1, 1, 8, 8)
+    #anim_delay = (0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.5)
+    delay_spec = ([20*0.5], # empty
+                  [20*1], #   grassy
+                  [20*0.5], # stony
+                  [20*0.5], # sandy
+                  [20*0.5], # snowy
+                  [20*0.5], # icy
+                  [20*0.5], # dirty
+                  [20*0.5, 20*0.3, 20*0.2, 20*0.3, 20*0.5, 20*0.3, 20*0.2, 20*0.3], # water
+                  [20*0.5, 20*0.3, 20*0.2, 20*0.3, 20*0.5, 20*0.3, 20*0.2, 20*0.3]) # deep_water
     random_offset = (0, 3, 0, 0, 0, 0, 0, 0, 0)
 
 #def load_tile_image(index, scale = 4):
@@ -39,20 +48,21 @@ class Tiles:
 #def load_tile_transition_image(index, transition):
 #    return load_texture("tile_" + Tiles.tiles[index]+ "_" + transition + ".png", 4, True)[0]
 
+def extend_list(len1, ilist, fill_value=None):
+    if len(ilist) < len1: ilist.extend([fill_value] * (len1 - len(ilist)))
+    return ilist
+
 def load_tile_anim(index, anim_len = Tiles.default_anim_len):
-    d = list([])
-    for i in range(anim_len):
-        d.append(20*Tiles.anim_delay[index])
-    
+    d = Tiles.delay_spec[index]
+    d = extend_list(anim_len, d, d[-1])
     ro = Tiles.random_offset[index]
     offset = r(0, ro)
 
     return Animation("tile_" + Tiles.tiles[index], anim_len, d, Settings.tile_scale, offset)
 
 def load_tile_transition_anim(index, transition, anim_len = Tiles.default_anim_len, offset = 0):
-    d = list([])
-    for i in range(anim_len):
-        d.append(20*Tiles.anim_delay[index])
+    d = Tiles.delay_spec[index]
+    d = extend_list(anim_len, d, d[-1])
     return Animation("tile_" + Tiles.tiles[index] + "_" + transition, anim_len, d, Settings.tile_scale, offset)
 
 class TileMap:
@@ -290,7 +300,7 @@ def serialize_object(obj):
     # ttl, invulnerable, maxhealth, health, collider_type, image_path, posx, posy
 
 def save_area(name, area):
-    log("Saving area: " + str(name))
+    #log("Saving area: " + str(name))
     tmap = area.tilemap
     strfile = "tmap\n"
     for i in range(len(tmap)):

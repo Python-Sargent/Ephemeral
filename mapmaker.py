@@ -4,6 +4,7 @@ from pygame import *
 import src.screen_settings as screen_settings
 from src.sprite import Sprite
 from src.settings import Settings
+import src.log as log
 
 pygame.init()
 
@@ -98,6 +99,8 @@ def check_click():
 
 def main():
     Window.should_continue = True
+
+    log.log_begin()
     
     area = tile.deserialize_map(default_map)
     Window.current_tilemap = area[0]
@@ -137,5 +140,7 @@ def main():
         if Window.should_update == True: draw_map(screen, Window.elements)
 
     pygame.quit()
+    log("Saving area: mapmaker")
+    log.log_end()
 
 main()

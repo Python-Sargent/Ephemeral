@@ -16,7 +16,7 @@ from src.log import log
 
 class Textures:
     def player(img_name):
-        return texture.Animation("player_" + img_name, 2, [settings.Settings.tick_speed * 1, settings.Settings.tick_speed * 0.2], settings.Settings.player_scale)
+        return texture.Animation("player_" + img_name, 2, [settings.Settings.tick_speed * 5, settings.Settings.tick_speed * 0.2], settings.Settings.player_scale)
     def monster(img_name):
         return texture.Animation("monster_" + img_name, 1, [settings.Settings.tick_speed * 1, settings.Settings.tick_speed * 1], settings.Settings.monster_scale)
 

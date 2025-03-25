@@ -18,5 +18,5 @@ class Settings:
     drag = 1
     font = None
     volume = 0.5
-    port = 20001
+    port = 2048
     multicast_group = "224.8.8.8"

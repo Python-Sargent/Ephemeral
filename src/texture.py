@@ -105,8 +105,8 @@ class TextureType():
     TEXTURE_ANIMATION = "anim"
     TEXTURE_IMAGE = "img"
 
-def extend_list(len, ilist, fill_value=None):
-    if len(ilist) < len: ilist.extend([fill_value] * (len - len(ilist)))
+def extend_list(len1, ilist, fill_value=None):
+    if len(ilist) < len1: ilist.extend([fill_value] * (len1 - len(ilist)))
     return ilist
 
 class Texture():
