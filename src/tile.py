@@ -27,7 +27,7 @@ class Tiles:
     water = 7
     deep_water = 8 # 4 bit number
     tiles = ("empty", "grassy", "stony", "sandy", "snowy", "icy", "dirty", "water", "deep_water")
-    default_anim_len = 2
+    default_anim_len = 1
     #anim_lengths = (1, 4, 1, 1, 1, 1, 1, 4, 4)
     anim_lengths = (1, 4, 1, 1, 1, 1, 1, 8, 8)
     #anim_delay = (0.5, 1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.2, 0.5)
@@ -326,4 +326,4 @@ class TileRotations:
     WEST = 2
     SOUTH = 3
     EAST = 4
-    rotations = (0, 0, 90, 180, 270)
+    rotations = (90, 0, 180, 270, 0)

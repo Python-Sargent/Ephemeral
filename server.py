@@ -1,7 +1,56 @@
+import socket
+
+class ServerClient:
+    def __init__(self, ip, sock):
+        self.ip = ip
+        self.sock = sock
+
 class Server:
     class Settings:
-        port = 20001
+        port = 2048
+        host = socket.gethostbyname(socket.gethostname()) # for multiplayer and LAN
+        #host = "127.0.0.1" # localhost for testing and singleplayer
         multicast_group = "224.8.8.8"
+        client_limit = 4 # maximum amount of unanswered connections
+    tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clients = list([])
+    def create(self, host=None, port=None):
+        if host != None: self.host = host
+        if port != None: self.port = port
+        self.tcp.bind((self.Settings.host, self.Settings.port))
+        pass
+    def listen(self):
+        self.tcp.listen(self.Settings.client_limit)
+    def accept(self):
+        commsock, ip = self.tcp.accept()
+        self.clients.append(ServerClient(ip, commsock))
+        print("Client connected at " + str(ip))
+        return ip
+    def recv_bytes(self, protocol, ip):
+        if protocol == Network.PROTOCOL_TCP:
+            for i in range(len(self.clients)):
+                if self.clients[i].ip == ip:
+                    return self.clients[i].sock.recv(1024).decode("utf-8")
+        elif protocol == Network.PROTOCOL_UDP:
+            #return self.udp.recv()
+            print("UDP not supported")
+            pass
+    def recv_str(self, protocol, ip):
+        if protocol == Network.PROTOCOL_TCP:
+            for i in range(len(self.clients)):
+                if self.clients[i].ip == ip:
+                    return self.clients[i].sock.recv(1024).decode("utf-8")
+        elif protocol == Network.PROTOCOL_UDP:
+            #return self.udp.recv()
+            print("UDP not supported")
+            pass
+    def close(self, ip):
+        for i in range(len(self.clients)):
+            if self.clients[i].ip == ip:
+                self.clients[i].sock.close()
+                self.clients.pop(i)
+    
+
 
 class Network:
     def send(ip, content):
@@ -17,7 +66,29 @@ class Network:
         SERVER_ADD_CLIENT = "CLIENT_ADD"
         SERVER_REMOVE_CLIENT = "CLIENT_REMOVE"
         SERVER_CLIENT_INPUT = "CLIENT_INPUT"
+    class Headers:
+        DATA_TILEMAP = 0b1111
+    PROTOCOL_TCP = "TCP"
+    PROTOCOL_UDP = "UDP"
+
+def serialize_message(header, payload):
+    # return header + payload
+    pass
+
+
+def main():
+    Server.create(Server)
+
+    running = True
     
+    Server.listen(Server)
+    while running is True:
+        ip = Server.accept(Server)
+
+        print(Server.recv_str(Server, Network.PROTOCOL_TCP, ip))
+    Server.close(Server, ip)
+
+main()
 
 """
 import socket

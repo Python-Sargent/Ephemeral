@@ -45,7 +45,7 @@ class Menu:
     def join_singleplayer(self):
         log.log("Joining singleplayer game")
         DiscordRPC.set(DiscordRPC, "In Game", "Playing Singleplayer")
-        self.should_continue = begin_client(screen) # TODO eventually pass in the server ip (localip or multiplayer server ip)
+        self.should_continue = begin_client(screen, "127.0.0.1", 2048)
 
 def draw_menu(screen, sprites = False):
     if sprites == False:

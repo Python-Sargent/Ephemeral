@@ -9,9 +9,11 @@ import src.sprite as sprite
 import src.visual as visual
 import src.game as game
 import src.screen_settings as screen_settings
+from src.settings import Settings
+import socket
 from time import sleep as s
 
-def begin(screen):
+def begin(screen, ip="127.0.0.1", port=2048):
 
     pygame.display.set_caption(screen_settings.DisplayParams.titles.game)
 
@@ -21,7 +23,11 @@ def begin(screen):
     text_sprite.rect = textobj[1]
     screen.blit(text_sprite.image(), text_sprite.rect)
     pygame.display.flip()
-    s(1) # fake the wait for connect
+
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    client_id = client.connect((ip, port))
+    client.send("Hello server!".encode("utf-8"))
 
     return game.Game.play(game.Game, screen)
 
