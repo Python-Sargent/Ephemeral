@@ -14,7 +14,7 @@ class Sprite(pysprite.Sprite):
         else: self.rect = texture.get_rect()
         self.texture = None
         if type(texture) == "str":
-            self.texture = Animation(texture, 0 [0])
+            self.texture = Animation(texture, 0, [0])
         else:
             self.texture = texture
         #self.image = anim_image(self.texture)
