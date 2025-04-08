@@ -12,13 +12,13 @@ class HealthSpec:
         self.damage_group = damage_group
 
 class Object:
-    def __init__(self, ttl, hspec, collider_type = "collider", sprite = False): # TTL is Time To Live
-        if sprite != False:
+    def __init__(self, ttl, hspec, collider_type = "collider", sprite = None, id=None): # TTL is Time To Live
+        if sprite !=None:
             if sprite.is_sprite():
                 self.sprite = sprite
             else:
                 self.rect = sprite
-                self.sprite = False
+                self.sprite = None
         self.max_health = hspec.maxhealth
         self.health = hspec.health
         self.invulnerable = hspec.invulnerable
@@ -27,13 +27,14 @@ class Object:
         self.lifetime = 0
         self.collider_type = collider_type # collider, trigger, none
         self.alive = True
+        self.id = id
     
     def remove(self):
-        self.sprite = False
-        self.rect = False
-        self.health = 0
-        self.max_health = 0
-        self.alive = False
+        self.sprite = None
+        self.rect = None
+        self.health = None
+        self.max_health = None
+        self.alive = None
     
     def duplicate(self):
         return self(self.ttl, HealthSpec(self.invulnerable, self.max_health, self.health, self.damage_group), self.sprite)

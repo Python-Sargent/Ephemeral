@@ -4,7 +4,6 @@
 # 
 
 from src.texture import load_texture
-from src.texture import load_spriteobj
 from pygame import Vector2
 from src.object import Object
 from src.object import HealthSpec
@@ -25,7 +24,7 @@ class Tiles:
     icy = 5
     dirty = 6
     water = 7
-    deep_water = 8 # 4 bit number
+    deep_water = 8
     tiles = ("empty", "grassy", "stony", "sandy", "snowy", "icy", "dirty", "water", "deep_water")
     default_anim_len = 1
     #anim_lengths = (1, 4, 1, 1, 1, 1, 1, 4, 4)
@@ -41,6 +40,8 @@ class Tiles:
                   [20*0.5, 20*0.3, 20*0.2, 20*0.3, 20*0.5, 20*0.3, 20*0.2, 20*0.3], # water
                   [20*0.5, 20*0.3, 20*0.2, 20*0.3, 20*0.5, 20*0.3, 20*0.2, 20*0.3]) # deep_water
     random_offset = (0, 3, 0, 0, 0, 0, 0, 0, 0)
+    #def get_b2(self, tile):
+    #    return self.tiles[int(tile, 2)]
 
 #def load_tile_image(index, scale = 4):
 #    return load_texture("tile_" + Tiles.tiles[index] + ".png", scale, True)[0]
@@ -244,7 +245,7 @@ def loadMap(name):
     try:
         area_map = deserialize_map(open(fullname))
     except FileNotFoundError:
-        print(f"Cannot load objectmap: {fullname}")
+        print(f"Cannot load mapfile: {fullname}")
         raise SystemExit
     return area_map
 

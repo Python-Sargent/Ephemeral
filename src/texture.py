@@ -128,3 +128,10 @@ class Texture():
 
 def is_texture(texture):
     if type(texture) == type(Texture(None, None)): return True
+
+
+class TextureAssets:
+    def player(img_name):
+        return Animation("player_" + img_name, 2, [Settings.tick_speed * 5, Settings.tick_speed * 0.2], Settings.player_scale)
+    def monster(img_name):
+        return Animation("monster_" + img_name, 1, [Settings.tick_speed * 1, Settings.tick_speed * 1], Settings.monster_scale)
