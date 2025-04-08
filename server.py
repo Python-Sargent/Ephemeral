@@ -119,18 +119,15 @@ for op in options_it:
             if limit and limit != "":
                 limit = int(limit)
                 Server.client_limit = limit
-        case "--auto-shutdown":
-            Server.auto_shutdown = True
 
 if len(options) > 0:
     print(f"Running server with options: \nPort: {Server.port}\nHost: {Server.host}\nMaximum Waiting Clients: {Server.client_max}\nClient Limit: {Server.client_limit}")
 
-def start(custom_port=None, custom_client_max=None, localhost_override=None, client_limit=None, auto_shutdown=None):
+def start(custom_port=None, custom_client_max=None, localhost_override=None, client_limit=None):
     if custom_port != None: Server.port = custom_port
     if custom_client_max != None: Server.client_max = custom_client_max
     if localhost_override != None and localhost_override == True: Server.host = "127.0.0.1"
     if client_limit != None: Server.client_limit = client_limit
-    if auto_shutdown != None: Server.auto_shutdown = auto_shutdown
 
     Server.create(Server)
 
