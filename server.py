@@ -8,17 +8,47 @@ class ServerClient:
         self.ip = ip
         self.sock = sock
 
-class ThreadingClient(ServerClient):
-    def __init__(self, client, thread):
-        super().__init__(client.ip, client.sock)
+def threaded_tcpclient(client: ServerClient, stop_event: threading.Event):
+    client.sock.sendall(net.pack(net.Network.Headers.DEBUG_MESSAGE, ["Hello from server".encode("utf-8")]))
+    while not stop_event.is_set():
+        try:
+            msg = client.sock.recv(2048)
+            response = Server.handle_request(Server, client, msg)
+            if response != None: client.sock.sendall(response)
+            header, payloads = net.unpack(msg)
+            sh = str(bin(int(header)))[2:]
+            ps = ""
+            for payload in payloads:
+                ps += net.payload_str(header, payload) + "\n"
+            print(f"Recieved from client << Header: {sh}, Payloads: {ps}")
+        except RuntimeError as e:
+            print(f"Error: {e}")
+            break
+    client.sock.sendall(net.pack(net.Network.Headers.UPDATE_CONNECTION, [net.Network.Messages.CONNECTION_END])) # end the connection
+    print(f"Connection with {client.ip} was closed.")
+    client.sock.close()
+
+class ClientThread(threading.Thread):
+    def __init__(self, client: ServerClient):
+        stop_event = threading.Event()
+        super().__init__(None, threaded_tcpclient, "CLIENT_THREAD_"+str(len(Server.clients)), (client, stop_event), {})
+        self.daemon = True
+        self.stop_event = stop_event
+    def stop(self):
+        self.stop_event.set()
+
+class ThreadClient:
+    def __init__(self, client: ServerClient, thread: ClientThread):
+        self.client = client
         self.thread = thread
 
 class Server:
+    display_name = "Ephemeral Server"
     port = 2048
     client_max = 4
     host = socket.gethostbyname(socket.gethostname())
-    multicast_group = "224.8.8.8"
-    version = "0.1.0"
+    #multicast_group = "224.8.8.8"
+    version = "0.1.01"
     client_limit = None
     clients = []
     tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,10 +69,18 @@ class Server:
         return ServerClient(ip, commsock)
     def get_info(self):
         payloads = []
+        payloads.append(self.display_name.encode("utf-8"))
         payloads.append(self.host.encode("utf-8"))
         payloads.append(self.version.encode("utf-8"))
         return payloads
-    def handle_request(self, client, msg):
+    def get_client(self, name):
+        for i in range(len(self.clients)):
+            tclient = self.clients[i]
+            if tclient.client.sock.getpeername()[0] == name[0] or tclient.client.ip == name[0]:
+                return i
+    def recieve_input(self, client: ServerClient, inp):
+        print(f"Recieved input from client at {client.ip}, Input: {inp}")
+    def handle_request(self, client: ServerClient, msg):
         header, payloads = net.unpack(msg)
         if header == net.Network.Headers.CLIENT_REQUEST:
             request = None
@@ -50,6 +88,18 @@ class Server:
             match request:
                 case net.Network.Requests.SERVER_GET_INFO:
                     return net.pack(net.Network.Headers.SERVER_INFO, self.get_info(self))
+                case net.Network.Requests.CLIENT_INPUT:
+                    try: inp = payloads[1]
+                    except: print(f"Invalid/Missing input from {client.ip}, in request CLIENT_INPUT<{net.Network.Requests.CLIENT_INPUT}>"); inp = None
+                    self.recieve_input(self, client, inp)
+                    return None
+                case net.Network.Requests.CLIENT_END:
+                    try: clientname = payloads[1]
+                    except: print(f"Invalid clientname from {client.ip}, in request CLIENT_END<{net.Network.Requests.CLIENT_END}>"); clientname = None
+                    ci = self.get_client(self, clientname)
+                    self.clients[ci].stop()
+                    self.clients.pop(ci)
+                    return net.pack(net.Network.Headers.UPDATE_CONNECTION, [net.Network.Messages.CONNECTION_END])
         return None
     #def recv_bytes(self, protocol, ip):
     #    if protocol == net.Network.PROTOCOL_TCP:
@@ -72,26 +122,6 @@ class Server:
     #        if self.clients[i].ip == ip:
     #            self.clients[i].sock.close()
     #            self.clients.pop(i)
-
-def threaded_tcpclient(client):
-    client.sock.sendall(net.pack(net.Network.Headers.DEBUG_MESSAGE, ["Hello from server".encode("utf-8")]))
-    while True:
-        try:
-            msg = client.sock.recv(2048)
-            response = Server.handle_request(Server, client, msg)
-            if response != None: client.sock.sendall(response)
-            header, payloads = net.unpack(msg)
-            sh = str(bin(int(header)))[2:]
-            ps = ""
-            for payload in payloads:
-                ps += net.payload_str(header, payload) + "\n"
-            print(f"Recieved from client << Header: {sh}, Payloads: {ps}")
-        except RuntimeError as e:
-            print(f"Error: {e}")
-            break
-
-    print(f"Connection with {client.ip} was closed.")
-    client.sock.close()
 
 options = sys.argv[1:]
 
@@ -136,12 +166,9 @@ def start(custom_port=None, custom_client_max=None, localhost_override=None, cli
     while Server.should_continue is True:
         if Server.client_limit == None or len(Server.clients) < Server.client_limit:
             client = Server.accept_tcp(Server)
-            client_thread = threading.Thread(None, threaded_tcpclient, "TCP_THREAD_"+str(len(Server.clients)), (client,), {}) # None, func, name, args, kwargs, *, daemon
-            client_thread.daemon = True
+            client_thread = ClientThread(client)
             client_thread.start()
-            Server.clients.append(ThreadingClient(client, client_thread))
-
-            #thread_id = start_new_thread(threaded_tcpclient, (client,))
+            Server.clients.append(ThreadClient(client, client_thread))
 
 if __name__ == "__main__": # start the server if server.py has been run, otherwise we know it's being imported
     start()

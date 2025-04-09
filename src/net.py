@@ -1,9 +1,9 @@
 class Network:
     class Requests:
         SERVER_GET_INFO = 0b00
-        SERVER_ADD_CLIENT = 0b01
-        SERVER_REMOVE_CLIENT = 0b10
-        SERVER_CLIENT_INPUT = 0b11
+        CLIENT_AUTH = 0b01
+        CLIENT_INPUT = 0b10
+        CLIENT_END = 0b11
     class Headers: # headers follow this format: first number is datatype, next three are header
         # COMMON HEADERS
         DEBUG_MESSAGE = 0b0000
@@ -18,6 +18,13 @@ class Network:
         SERVER_INFO = 0b1001
         # CLIENT HEADERS
         CLIENT_REQUEST = 0b1000 # client is requesting data (payload specifies what the request is)
+    class Messages:
+        # Update Connection Header
+        CONNECTION_END = 0b0
+        CONNECTION_ESTABLISHED = 0b1
+        # Client Auth
+        AUTH_DENIAL = 0b0
+        AUTH_HANDSHAKE = 0b1
     PROTOCOL_TCP = 0b0
     PROTOCOL_UDP = 0b1
 

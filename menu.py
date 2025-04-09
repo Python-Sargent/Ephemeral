@@ -46,10 +46,8 @@ class Menu:
     singleplayer_server_thread = None
     def join_singleplayer(self):
         port = self.port
-        addr = "127.0.0.1"
         if self.no_server == True:
             port = None
-            addr = None
         self.should_continue = client.begin_singleplayer(screen, port)
     def join_multiplayer(self):
         port = self.port
