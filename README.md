@@ -11,13 +11,13 @@ A work in progress, multiplayer and serverside stuff is not up and running yet.
 
 Get the pygame module (I'm running pygame-ce, but pygame should work, if not look up how to install pygame-ce on your system)
 
-In your terminal of choice run `pip install pygame` follow any instructions (make sure pip is installed).
+In your terminal run `pip install pygame` follow any instructions (make sure pip is installed).
 
 #### DiscordRPC (Optional)
 
 This game has an optional dependency on the DiscordRPC module.
 
-In your terminal of choice run `pip install discordprc` follow any instructions (make sure pip is installed).
+In your terminal run `pip install discordprc` follow any instructions (make sure pip is installed).
 
 ### Running the Game
 

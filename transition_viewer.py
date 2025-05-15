@@ -1,3 +1,8 @@
+# python 3.13
+#
+# Ephemeral Transition Viewer
+# 
+
 import src.tile as tile
 import pygame
 from pygame import *

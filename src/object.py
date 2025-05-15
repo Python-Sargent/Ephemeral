@@ -1,7 +1,7 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
-#
+# Ephemeral Object Classes
+# 
 
 class HealthSpec:
     def __init__(self, invulnerable = False, maxhealth = 100, health = 100, damage_group = "none"):

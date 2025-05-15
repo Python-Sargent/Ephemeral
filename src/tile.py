@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Tiles
 # 
 
 from src.texture import load_texture
@@ -327,4 +327,4 @@ class TileRotations:
     WEST = 2
     SOUTH = 3
     EAST = 4
-    rotations = (90, 0, 180, 270, 0)
+    rotations = (0, 0, 270, 180, 90)

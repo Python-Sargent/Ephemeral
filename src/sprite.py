@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Sprites
 # 
 
 from pygame import sprite as pysprite

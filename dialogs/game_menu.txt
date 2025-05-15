@@ -1,0 +1,3 @@
+size 720 640
+text Menu 800 200 64 white
+bg image menu_background.png

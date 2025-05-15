@@ -1,3 +1,7 @@
+# python 3.13
+#
+# Ephemeral Effects
+# 
 
 #################################################################
 # Placeholders for functionality that has yet to be implemented #

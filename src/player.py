@@ -1,3 +1,8 @@
+# python 3.13
+#
+# Ephemeral Player Class
+# 
+
 from src.settings import Settings
 from pygame import Vector2
 from src.texture import TextureAssets

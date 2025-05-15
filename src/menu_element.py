@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Menu Elements
 # 
 
 from src.sprite import Sprite
@@ -46,3 +46,7 @@ class Button(Clickable):
         button.rect.center = pos
         del self.sprite
         self.sprite = button
+
+class Background():
+    def __init__(self, sprite):
+        self.sprite = sprite

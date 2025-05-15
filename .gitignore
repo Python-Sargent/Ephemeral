@@ -1,4 +1,4 @@
-# ignore venv for pygame-ce in ARCH
+# ignore venv for pygame-ce in ARCH Linux
 .venv
 python3
 # ignore vscode files
@@ -9,7 +9,9 @@ src/__pycache__
 # ignore personal installation/development files
 .testing
 log.txt
+server_log.txt
 textures/unused
 maps/map_mapmaker.txt
 .vscode/settings.json
 out
+temp/

@@ -1,5 +1,9 @@
-# Discord RPC
+# python 3.13
+#
+# Ephemeral App Interaction
+# 
 
+# Discord RPC
 try:
     import discordrpc
 

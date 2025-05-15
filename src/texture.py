@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Textures
 # 
 
 from pygame import transform

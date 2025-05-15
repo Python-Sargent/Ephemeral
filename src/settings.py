@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Settings
 # 
 
 from src.object import HealthSpec
@@ -18,6 +18,7 @@ class Settings:
     drag = 1
     font = None
     volume = 0.5
+    mode = "Development"
     def set(self, d): # this is a bad way to do it TODO make this a table or smth like that instead
         match d.name:
             case "fps":

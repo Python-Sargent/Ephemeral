@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Logging
 # 
 
 from os import linesep
@@ -8,26 +8,33 @@ import datetime
 
 verbose = True
 
-def _loglvl(message: str, level: str):
+class LogLevel:
+    Info = "Info"
+    Warn = "Warn"
+    Error = "Error"
+
+def __loglvl__(message: str, level: str):
     return "[" + level + "] " + message
 
-def _logmsg(message, filename):
+def __logmsg__(message: str, filename: str):
     try:
         with open(filename, "a") as log_file:  # "a" for append mode
             log_file.write(message + linesep) #os.linesep adds the correct line ending for the OS.
-            log_file.close()
     except OSError as e:
         print(f"Error writing to file {filename}: {e}")
 
-def log(message, loglevel = "Info"):
-    logmsg = _loglvl(str(message), str(loglevel))
+def __create_message__(message: str, loglevel: str):
+    logmsg = __loglvl__(str(message), str(loglevel))
     now = datetime.datetime.now()
     msg = str(now.strftime("%Y-%m-%d %H:%M:%S")) + ": " + logmsg
-    if loglevel == "Info":
+    if loglevel == LogLevel.Info:
         if verbose is True: print(msg, end="\n")
     else:
         print(msg, end="\n")
-    _logmsg(msg, "log.txt")
+    return msg
+
+def log(message, loglevel = "Info"):
+    __logmsg__(__create_message__(message, loglevel), "log.txt")
 
 def log_begin():
     mode = ""
@@ -47,3 +54,9 @@ $$$$$$$$/ $$/       $$/   $$/ $$$$$$$$/ $$/      $$/ $$$$$$$$/ $$/   $$/ $$/   $
 
 def log_end():
     log("Logging Finished\n\n")
+
+class Log:
+    def __init__(self, filename):
+        self.filename = filename
+    def log(self, message, loglevel="Info"):
+        __logmsg__(__create_message__(message, loglevel), self.filename)

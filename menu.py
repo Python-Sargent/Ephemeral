@@ -1,6 +1,6 @@
-# python
+# python 3.13
 #
-# Multiplayer Networking Game
+# Ephemeral Main Menu
 # 
 
 import pygame
@@ -45,28 +45,31 @@ class Menu:
     should_update = True
     singleplayer_server_thread = None
     def join_singleplayer(self):
-        port = self.port
-        if self.no_server == True:
-            port = None
-        self.should_continue = client.begin_singleplayer(screen, port)
+        try:
+            port = self.port
+            if self.no_server == True:
+                port = None
+            self.should_continue = client.begin_singleplayer(screen, port)
+        except RuntimeError as e:
+            log.log(e, log.LogLevel.Error)
+
     def join_multiplayer(self):
-        port = self.port
-        addr = self.address
-        if self.no_server == True:
-            port = None
-            addr = None
-        self.should_continue = client.begin_multiplayer(screen, addr, port)
+        try:
+            port = self.port
+            addr = self.address
+            if self.no_server == True:
+                port = None
+                addr = None
+            self.should_continue = client.begin_multiplayer(screen, addr, port)
+        except RuntimeError as e:
+            log.log(e, log.LogLevel.Error)
+
     no_server = False
     port = 2048
     address = "127.0.0.1"
 
-def draw_menu(screen, sprites = False):
-    if sprites == False:
-        screen.fill(screen_settings.DisplayParams.fill_color)
-    else:
-        screen.fill(screen_settings.DisplayParams.fill_color)
-        screen_settings.draw_frame(screen, sprites)
-    display.flip()
+def draw_menu(screen, sprites = False, fps=None):
+    screen_settings.draw_window(screen, sprites, fps)
     Menu.should_update = False
 
 def check_hover(elements):
@@ -119,18 +122,16 @@ for op in options_it:
                 Menu.address = addr
 
 def main():
-
-    #bg = Sprite.spriteobj_to_sprite(Sprite, load_spriteobj("menu_bg.png"))
-    #Menu.elements.append(bg)
+    bg = menu_element.Background(Sprite(load_texture("menu_background.png", 4, True)))
+    Menu.elements.append(bg)
 
     log.log_begin()
+    DiscordRPC.set(DiscordRPC, "In Menu", "Sitting in Main Menu")
 
     play = menu_element.Button(Menu.join_singleplayer, Menu, "Singleplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 - 360))
     Menu.elements.append(play)
     play2 = menu_element.Button(Menu.join_multiplayer, Menu, "Multiplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 - 128))
     Menu.elements.append(play2)
-
-    DiscordRPC.set(DiscordRPC, "In Menu", "Sitting in Main Menu")
 
     while Menu.should_continue is True:
         dtime = clock.tick(Settings.fps)
@@ -142,15 +143,14 @@ def main():
                 check_click(Menu.elements)
         
         check_hover(Menu.elements)
-
-        if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu))
+        if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu), clock.get_fps())
 
     pygame.quit()
-
     DiscordRPC.stop(DiscordRPC)
-
     log.log("Menu Stopped")
-
     log.log_end()
 
-main()
+try:
+    main()
+except Exception as error:
+    log.log(error, log.LogLevel.Error)
