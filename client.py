@@ -16,6 +16,8 @@ import src.object as obj
 from src.player import Player
 from src.texture import TextureAssets
 from src.app_interaction import DiscordRPC
+from src.profiler import Profiler
+from src.profiler import Profile
 import src.net as net
 import threading
 import server
@@ -113,7 +115,7 @@ def client_thread(client: net.Client, stop_event: threading.Event):
             for payload in payloads:
                 ps += "\n" + net.payload_str(header, payload)
             log.log(f"Recieved from server << Header: {sh}, Payloads: {ps}")
-        except socket.SO_ERROR as e:
+        except RuntimeError as e:
             log.log(e, log.LogLevel.Error)
     client.close()
 
@@ -129,6 +131,7 @@ class CThread(threading.Thread):
 def handle_tick(dtime):
     if Game.tick_timer > 100:
         log.log(str(int(Game.tick_timer/50)) + " ticks were dropped", "Warning")
+        Profiler.dropped_ticks += int(Game.tick_timer/50)
         Game.tick_timer = 0; # timer has fallen behind at least 2 ticks, drop all the ticks
     if Game.tick_timer >= 50:
         Game.tick(Game, dtime, Game.tick_timer)
@@ -138,7 +141,14 @@ def handle_tick(dtime):
 def begin(screen, ip="127.0.0.1", port=2048):
     log.log("Starting game")
 
-    screen.fill(visual.Colors.darkgrey)
+    Profiler.start(Profiler)
+
+    if screen_settings.check_resize(screen, True):
+        log.log("Updating Display Params due to forced resize: (" +
+                str(screen_settings.DisplayParams.width) + "x" +
+                str(screen_settings.DisplayParams.height) + ")", log.LogLevel.Warn)
+
+    screen.fill(visual.Colors.darkgrey.rgb)
     textobj = visual.create_text("Connecting to Server...", Vector2(screen_settings.DisplayParams.center[0], screen_settings.DisplayParams.center[1]), 48)
     text_sprite = sprite.Sprite(textobj[0])
     text_sprite.rect = textobj[1]
@@ -183,6 +193,10 @@ def begin(screen, ip="127.0.0.1", port=2048):
                     log.log("Quitting Game")
                     continue_application = False
                     Game.is_playing = False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F5 or (event.key == pygame.K_RSHIFT):
+                        Profiler.toggle = not Profiler.toggle
+                        log.log("Profiler " + ["Off", "On"][bool(Profiler.toggle)])
                 
             obj.removeDeadObjects(Game.objects)
             lpi, lpo = Game.get_local_player(Game)
@@ -200,11 +214,12 @@ def begin(screen, ip="127.0.0.1", port=2048):
             Game.objects[lpi].update(dtime)
 
             handle_tick(dtime)
+            Profiler.update(Profiler, Profile(clock, dtime))
 
             #print("frame: " + str(dtime))
             #print(Game.tick_timer)
 
-            screen_settings.draw_window(screen, Game.get_sprites(Game), clock.get_fps())
+            screen_settings.draw_window(screen, Game.get_sprites(Game), Profiler)
 
         log.log("Game Finished")
     except RuntimeError as e:
@@ -242,6 +257,7 @@ def begin_multiplayer(screen, addr, port):
     pygame.display.set_caption(screen_settings.DisplayParams.titles.multiplayer)
     log.log("Joining multiplayer game")
     DiscordRPC.set(DiscordRPC, "In Game", "Playing Multiplayer")
+
     cont = True
     try:
         cont = begin(screen, addr, port)

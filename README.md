@@ -9,7 +9,7 @@ A work in progress, multiplayer and serverside stuff is not up and running yet.
 
 #### Pygame (Required)
 
-Get the pygame module (I'm running pygame-ce, but pygame should work, if not look up how to install pygame-ce on your system)
+Get the pygame module (Ephemeral is developed with pygame-ce, but pygame should work, if not look up how to install pygame-ce on your system)
 
 In your terminal run `pip install pygame` follow any instructions (make sure pip is installed).
 
@@ -21,7 +21,7 @@ In your terminal run `pip install discordprc` follow any instructions (make sure
 
 ### Running the Game
 
-To play, just run `menu.py` (this is likely to break in some versions as I'm pushing straight to main while developing for version 1).
+To play, just run `menu.py` (this may break in the future, so hang on while I develop version 1).
 
 #### Arguments
 
@@ -63,6 +63,6 @@ https://discord.gg/7HXHXJ8k9R
 Credit where credit is due...
 
 Thanks to TX_Miner for tons of help with the serialization protocol and helping me code when my brain is dead.
-Also thanks for playtesting, network testing, etc. It's been a huge help.
+Also thanks to everyone who did playtesting, network testing, etc. It's been a huge help.
 
 Thanks for my Dad helping me think through some of the tough issues.

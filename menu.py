@@ -14,6 +14,7 @@ from src.visual import Colors
 import src.log as log
 from src.app_interaction import DiscordRPC
 from src.settings import Settings
+from src.profiler import Profiler
 import sys
 
 pygame.init()
@@ -68,8 +69,8 @@ class Menu:
     port = 2048
     address = "127.0.0.1"
 
-def draw_menu(screen, sprites = False, fps=None):
-    screen_settings.draw_window(screen, sprites, fps)
+def draw_menu(screen, sprites = False, profiler=None):
+    screen_settings.draw_window(screen, sprites, profiler)
     Menu.should_update = False
 
 def check_hover(elements):
@@ -122,15 +123,22 @@ for op in options_it:
                 Menu.address = addr
 
 def main():
+    log.log_begin()
+
+    if screen_settings.check_resize(screen, True):
+        log.log("Updating Display Params due to forced resize: (" +
+                str(screen_settings.DisplayParams.width) + "x" +
+                str(screen_settings.DisplayParams.height) + ")", log.LogLevel.Warn)
+
     bg = menu_element.Background(Sprite(load_texture("menu_background.png", 4, True)))
     Menu.elements.append(bg)
 
-    log.log_begin()
     DiscordRPC.set(DiscordRPC, "In Menu", "Sitting in Main Menu")
 
-    play = menu_element.Button(Menu.join_singleplayer, Menu, "Singleplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 - 360))
+
+    play = menu_element.Button(Menu.join_singleplayer, Menu, "Singleplayer", Colors.white.rgb, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 * 0.4))
     Menu.elements.append(play)
-    play2 = menu_element.Button(Menu.join_multiplayer, Menu, "Multiplayer", Colors.white, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 - 128))
+    play2 = menu_element.Button(Menu.join_multiplayer, Menu, "Multiplayer", Colors.white.rgb, 4, Vector2(screen_settings.DisplayParams.width / 2, screen_settings.DisplayParams.height / 2 * 0.8))
     Menu.elements.append(play2)
 
     while Menu.should_continue is True:
@@ -143,7 +151,10 @@ def main():
                 check_click(Menu.elements)
         
         check_hover(Menu.elements)
-        if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu), clock.get_fps())
+        #keys = pygame.key.get_pressed()
+        #if keys[pygame.K_F5]:
+        #    Profiler.toggle = not Profiler.toggle
+        if Menu.should_update is True: draw_menu(screen, Menu.get_sprites(Menu), None)
 
     pygame.quit()
     DiscordRPC.stop(DiscordRPC)

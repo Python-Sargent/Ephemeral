@@ -7,19 +7,39 @@ from src.settings import Settings
 from src.texture import load_texture
 from pygame import transform
 from pygame import Surface
+from colorsys import hsv_to_rgb as HSV
+from colorsys import rgb_to_hsv as RGB
+
+def HSV_RGB(h :int, s :int, v :int):
+    h = h/360;s = s/255;v = v/255 # normalize the HSV values
+    rgb = [int(x * 255) for x in HSV(h, s, v)]
+    return rgb
+
+def RGB_HSV(r :int, g :int, b :int):
+    r=r/255;g=g/255;b=b/255
+    hsv = [int(x * 255) for x in RGB(r, g, b)]
+
+class COLOR:
+    def __init__(self, rgb=(255, 255, 255), hsv=None):
+        self.rgb = rgb
+        if hsv != None:
+            self.hsv = hsv
+            self.rgb = HSV_RGB(hsv[0], hsv[1], hsv[2])
+        else:
+            self.hsv = RGB_HSV(self.rgb[0], self.rgb[1], self.rgb[2])
 
 class Colors:
-    red = 255, 0, 0
-    orange = 175, 80, 0
-    yellow = 200, 200, 5
-    green = 0, 255, 0
-    cyan = 5, 125, 125
-    blue = 0, 0, 255
-    purple = 125, 5, 125
-    black = 0, 0, 0
-    white = 255, 255, 255
-    darkgrey = 80, 80, 80
-    darkgrey2 = 60, 60, 70
+    red = COLOR(None, (0, 255, 255))
+    orange = COLOR(None, (20, 255, 255))
+    yellow = COLOR(None, (60, 255, 255))
+    green = COLOR(None, (110, 255, 255))
+    cyan = COLOR(None, (150, 255, 255))
+    blue = COLOR(None, (240, 255, 255))
+    purple = COLOR(None, (270, 255, 255))
+    black =COLOR(None, (0, 0, 0))
+    white = COLOR(None, (0, 0, 255))
+    darkgrey = COLOR(None, (0, 0, 100))
+    darkgrey2 = COLOR(None, (240, 50, 100))
     color_dict = {
         "red": (255, 0, 0),
         "green": (0, 255, 0),
@@ -54,7 +74,7 @@ class Particle:
         return self(self.ttl, HealthSpec(self.invulnerable, self.max_health, self.health, self.damage_group), self.sprite)
 """
         
-def create_text(text, pos, size = 32, color = Colors.white):
+def create_text(text, pos, size = 32, color = Colors.white.rgb):
     from pygame import font
     font.init() # initalize the font to get rid of edge cases, can be called more than once without causing issues
     textfont = font.Font(Settings.font, size)
@@ -67,7 +87,7 @@ def create_button(text, pos):
     from pygame import font
     font.init()
     textfont = font.Font(Settings.font, 32)
-    textimage = textfont.render(text, False, Colors.white)
+    textimage = textfont.render(text, False, Colors.white.rgb)
     textrect = textimage.get_rect()
     textrect.center = (pos.x, pos.y)
     return (textimage, textrect) # returns a spriteobj
