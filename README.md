@@ -54,9 +54,9 @@ However at this point in time I will be developing this personally, anyone is fr
 
 ## Discord Server
 
-If you have ideas or want to talk about this game, there is a discord server.
+If you have ideas or want to talk about this game, there is a [discord](https://discord.gg/7HXHXJ8k9R) server.
 You can also see updates and announcements on this server.
-https://discord.gg/7HXHXJ8k9R
+##### Botting is not allowed, you will be banned immediately.
 
 ## Credits
 
